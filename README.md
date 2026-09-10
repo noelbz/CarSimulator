@@ -10,6 +10,7 @@ För att bygga projektet:
 dotnet restore CarSimulatorApp.sln
 dotnet build CarSimulatorApp.sln
 ```
+Projektet bygger med nullable-warnings i den befintliga koden, men utan build errors.
 
 ## Tests
 
@@ -124,7 +125,7 @@ Om build eller tester failar så ska deployment inte fortsätta.
 
 Jag har skapat en ARM Template i:
 
-`infrastructure/azuredeploy.json`
+`azuredeploy.json`
 
 Den används för att skapa eller uppdatera:
 
