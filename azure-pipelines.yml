@@ -1,0 +1,38 @@
+trigger:
+- develop
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET 9 SDK'
+  inputs:
+    packageType: 'sdk'
+    version: '9.0.x'
+
+- script: dotnet restore CarSimulatorApp.sln
+  displayName: 'Restore'
+
+- script: dotnet build CarSimulatorApp.sln --configuration Release --no-restore
+  displayName: 'Build'
+
+- script: dotnet test CarSimulatorApp.sln --configuration Release --no-build
+  displayName: 'Test'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Web App'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: 'CarSimulator.Server/CarSimulator.Server.csproj'
+    arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: true
+
+- task: AzureWebApp@1
+  displayName: 'Deploy to Azure App Service'
+  inputs:
+    azureSubscription: 'azure-carsimulator'
+    appType: 'webApp'
+    appName: 'noel-carsimulator'
+    package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
