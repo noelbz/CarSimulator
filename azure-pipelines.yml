@@ -1,0 +1,21 @@
+trigger:
+- develop
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET 9 SDK'
+  inputs:
+    packageType: 'sdk'
+    version: '9.0.x'
+
+- script: dotnet restore CarSimulatorApp.sln
+  displayName: 'Restore'
+
+- script: dotnet build CarSimulatorApp.sln --configuration Release --no-restore
+  displayName: 'Build'
+
+- script: dotnet test CarSimulatorApp.sln --configuration Release --no-build
+  displayName: 'Test'
